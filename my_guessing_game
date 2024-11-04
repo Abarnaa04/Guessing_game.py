@@ -1,0 +1,32 @@
+import streamlit  as st
+import random
+words = ["python","streamlit","guessing","name","age"]
+selected_word = random.choice(words)
+if 'attempts' not in st.session_state:
+ st.session_state.attempts = []
+ st.session_state.selected_word = selected_word
+ st.session_state.game_over = False
+ st.title("Word guessing game")
+ st.write("guess the word!")
+ #display the guessed letters
+ display_word = ".join([letter if letter in st.session_state.attempts else '_' for letter in st.session_state.selected_word])"
+st.write(display_word)
+
+guess = st.text_input(input("Enter a word:",max_chars=1))
+
+if st.button("Submit Guess"):
+ if guess and guess not in st.session_state.attempts:
+  st.session_state.attempts.append(guess)
+  if all(letter in st.session_state.attempts for letter in st.session_state.selected_word):
+   st.session_state.game_over=True
+   st.success(f"Congratulations! you guessed the word:{st.session_state.selected_word}")
+  elif guess in st.session_state.attempts:
+   st.warning("you've already guessed that letter.")
+  else:
+   st.warning("please enter a single letter.")
+if st.session_state.game_over:
+ if st.button("Play again"):
+  st.session_state.attempts = []
+  st.session_state.selected_word = random.choice(words)
+  st.session_state.game_over = False
+  st.experimental_return()
